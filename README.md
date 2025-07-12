@@ -1,7 +1,8 @@
 # 🧲 Torrenting Stack in a Proxmox LXC  
 (VPN-protected P2P traffic + Tailscale remote access)
 
-These generic instructions let anyone spin up **Gluetun (VPN), qBittorrent, Radarr, Sonarr, Prowlarr** and **Portainer** in an *unprivileged* Ubuntu LXC.  
+These generic instructions let you spin up **Gluetun (VPN), qBittorrent, Radarr, Sonarr, Prowlarr** and **Portainer** in an *unprivileged* Ubuntu LXC. Knowledge of Proxmox, Docker, Portainer and Tailscale is required.
+
 Replace the **bold‐caps placeholders** with values that suit **your** LAN, storage path and VPN provider.
 
 ## 🎯 What This Does
@@ -80,9 +81,6 @@ lxc.mount.entry: /dev/net dev/net none bind,create=file
 lxc.cgroup2.devices.allow = c 10:200 rwm
 lxc.cgroup.devices.allow  = a
 ```
-
-*If you prefer the GUI, you can use an mp0 bind instead of the manual lxc.mount.entry.*
-
 ---
 
 ## 🐧 Inside the Container
