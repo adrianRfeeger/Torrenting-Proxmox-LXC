@@ -4,6 +4,27 @@
 These generic instructions let anyone spin up **Gluetun (VPN), qBittorrent, Radarr, Sonarr, Prowlarr** and **Portainer** in an *unprivileged* Ubuntu LXC.  
 Replace the **bold‐caps placeholders** with values that suit **your** LAN, storage path and VPN provider.
 
+## 🎯 What This Does
+
+This setup creates a **completely isolated torrenting environment** that:
+
+- **🔒 Routes ALL P2P traffic through a VPN** - Your ISP never sees torrent traffic
+- **🏠 Keeps management traffic on your LAN** - Web UIs accessible locally without VPN
+- **🌐 Provides secure remote access** - Tailscale lets you manage from anywhere
+- **📁 Shares storage with your host** - Downloads go directly to your NAS/server storage
+- **🐳 Runs everything in Docker** - Easy updates, backups, and management
+
+### How It Works
+
+1. **Gluetun** creates a VPN tunnel and acts as a network gateway
+2. **qBittorrent** runs entirely through Gluetun's network (VPN-only)
+3. **Radarr/Sonarr/Prowlarr** connect to qBittorrent and manage downloads
+4. **All apps** share the same storage directory for seamless file access
+5. **Tailscale** provides encrypted remote access without exposing ports
+6. **Portainer** gives you a web interface to manage all containers
+
+The genius is that **only P2P traffic goes through the VPN** - everything else uses your normal internet connection for speed and reliability.
+
 ---
 
 ## 📋 Variable cheat-sheet
@@ -212,6 +233,30 @@ volumes:
   qbittorrent-config:
   gluetun-config:
 ```
+
+---
+
+## 🎮 Post-Setup Configuration
+
+### Configure qBittorrent for VPN-only traffic
+
+Once the stack is running, you **must** configure qBittorrent to use only the VPN interface:
+
+1. **Access qBittorrent** at `http://<CT_IP>:5080`
+2. **Login** with default credentials: `admin` / `adminadmin`
+3. **Go to Settings** → **Advanced** → **Network Interface**
+4. **Set Network Interface** to `tun0` (this forces all P2P traffic through the VPN)
+5. **Save** and restart qBittorrent
+
+⚠️ **CRITICAL**: Without setting the interface to `tun0`, torrents may leak through your regular internet connection!
+
+### Access your services
+
+- **qBittorrent**: `http://<CT_IP>:5080` (VPN-protected torrenting)
+- **Radarr**: `http://<CT_IP>:7878` (Movie management)
+- **Sonarr**: `http://<CT_IP>:8989` (TV show management)  
+- **Prowlarr**: `http://<CT_IP>:9696` (Indexer management)
+- **Portainer**: `https://<CT_IP>:9443` (Container management)
 
 ---
 
